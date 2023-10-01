@@ -12,9 +12,9 @@
 
 #define CHROM_LENGTH        500     // 遺伝子の長さ、商品数と同じ
 #define GENERATION_MAX		350	    // 世代交代数
-#define POP_SIZE			1000    // 個体集団内の個体の数
+#define POP_SIZE			170    // 個体集団内の個体の数
 #define ELITE               1
-#define PROBABILITY         0.33
+#define PROBABILITY         0.001
 
 
 //本番の評価関数でも下記と同じ値を使います
@@ -289,10 +289,19 @@ void mutate_gray_code(int* num, int max_value) {
 }
 
 void mutate_for_oreder_rep(int* chrom) {
-    int i = rand() % CHROM_LENGTH;
-    int value = chrom[i];
-    mutate_gray_code(&value, CHROM_LENGTH - i);
-    chrom[i] = 1 + (value % (CHROM_LENGTH - i));  // Ensure the mutated value is within the required range
+
+    // int i = rand() % CHROM_LENGTH;
+    // int value = chrom[i];
+    // mutate_gray_code(&value, CHROM_LENGTH - i);
+    // chrom[i] = 1 + (value % (CHROM_LENGTH - i));  // Ensure the mutated value is within the required range
+
+    for (int i = 0; i < CHROM_LENGTH; i++) {
+        if ( (double)rand()/RAND_MAX < PROBABILITY ) {
+            chrom[i] =  1 + (rand() % (CHROM_LENGTH - i));
+        }
+    }
+    
+    
 }
 
 
@@ -410,10 +419,7 @@ void new_generation(Individual* population,  Product* products) {
 
     //突然変異
     for (i = ELITE; i < POP_SIZE; i++) {
-        if ( (double)rand()/RAND_MAX < PROBABILITY ) {
-            
             mutate_for_oreder_rep(next_pop[i].chrom);
-        }
     }
 
     for (int i = 0; i < POP_SIZE; i++) {
